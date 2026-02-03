@@ -1,36 +1,40 @@
 import { createRouter, createWebHistory } from "vue-router";
-import UsersView from "@/views/UsersView.vue";
-import UserPosts from "@/views/UserPosts.vue";
+
+import MainLayout from "@/layout/MainLayout.vue";
 
 import UsersCards from "@/views/UsersCards.vue";
 import UserPostsCards from "@/views/UserPostsCards.vue";
 import PostCommentsCards from "@/views/PostCommentsCards.vue";
+import PostCards from "@/views/PostCards.vue";
+
+
 
 const routes = [
   {
-    path: "/",
-    name: "Users",
-    component: UsersView,
-  },
-  {
-    path: "/users/:id/posts",
-    name: "UserPosts",
-    component: UserPosts,
-  },
+    path:"/",
+    component: MainLayout,
+    children:[
+      { path: "cards/users", name: "UsersCards", component: UsersCards },
 
-  { path: "/cards/users", name: "UsersCards", component: UsersCards },
+      {
+        path: "cards/users/:id/posts",
+        name: "UserPostsCards",
+        component: UserPostsCards,
+      },
+      {
+        path: "cards/posts/:pId/comments",
+        name: "PostCommentsCards",
+        component: PostCommentsCards,
+      },
+      {
+        path: "cards/posts",
+        name: "PostsCards",
+        component: PostCards,
+      },
+    ]
+  }
 
-  {
-    path: "/cards/users/:id/posts",
-    name: "UserPostsCards",
-    component: UserPostsCards,
-  },
 
-  {
-    path: "/cards/posts/:pId/comments",
-    name: "PostCommentsCards",
-    component: PostCommentsCards,
-  },
 ];
 
 export default createRouter({

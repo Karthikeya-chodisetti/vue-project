@@ -115,5 +115,5 @@ const  updatePost=async (post) =>{
 
 
 <template>
-  <router-view />
+  <router-view/>
 </template>

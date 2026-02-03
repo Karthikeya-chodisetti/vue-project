@@ -9,14 +9,14 @@ export const useUsersStore = defineStore("user", {
 
   actions: {
     async fetchUsers() {
-      const { data } = await api.get("/users");
-      this.users =  data;
+      const res=await api.get("/users");
+      this.users=res.data;
     },
 
-    // async fetchUserById(id) {
-    //   const res = await fetch(`https://jsonplaceholder.typicode.com/users/${id}`);
-    //   this.currUser = await res.json();
-    // },
+    async fetchUserById(id) {
+      const res = await api.get(`/users/${id}`);
+      this.currUser = res.data;
+    },
 
     setUser(user) {
       if (user) {

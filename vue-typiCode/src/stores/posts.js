@@ -8,18 +8,27 @@ export const usePostsStore = defineStore("posts", {
   }),
 
   actions: {
+    async fetchPosts() {
+      const response = await api.get("/posts");
+      this.posts = response.data;
+    },
+    
     async fetchPostsByUser(userId) {
-      const { data }= await api.get("/posts" ,{ params:{userId} });
-      this.posts = data;
+      const response = await api.get("/posts", { params: { userId } });
+      this.posts = response.data;
     },
 
     async fetchPostById(postId) {
-      const { data } = await api.get(`/posts/${postId}`);
-      this.currPost = data;
+      const res = await api.get(`/posts/${postId}`);
+      this.currPost = res.data;
     },
 
-    setPost(post) {
-      this.currPost = post;
+    setPost(post){
+      if(post){
+        this.currPost = post;
+        return;
+      }
+      this.currPost=null;
     },
   },
 });

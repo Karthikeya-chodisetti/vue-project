@@ -1,49 +1,54 @@
 <script setup>
-defineProps({
-  user: {
-    type: Object,
-    required: true,
-  },
-});
+  defineProps({
+    user: {
+      type: Object,
+      required: true,
+    },
+  });
 </script>
 
 <template>
   <div class="userCard">
-    <div class="text">
-    <h4 class="uid" v-if="user.id">UserId: {{ user.id }}</h4>
-    <p v-if="user.name"> <span>Name:</span> {{ user.name }}</p>
-    <p v-if="user.username"> <span>UserName:</span> {{ user.username }}</p>
-    <p v-if="user.email"> <span>Email:</span> {{ user.email }}</p>
+
+    <div class="image">
+      <img :src="`https://i.pravatar.cc/300?img=${user.id}`" />
     </div>
+
+    <div class="info">
+      <p class="name"> {{ user.name }}</p>
+      <p class="email"> {{ user.email }}</p>
+    </div>
+    
   </div>
 </template>
 
 <style scoped>
-.uid{
-  text-align: center;
-  font-weight: bold;
-  margin: 0;
-  padding-bottom: 8px;
-  border-bottom: 1px solid #026143;
-}
+  .userCard{
+    background:#ffffff;
+    border:1px solid #9ccfbf;
+    border-radius:14px;
+    padding:14px;
+    width:100%;
+    max-width:220px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
 
-.text{
-  padding:0 10px;
-}
+  .image img{
+    width:80px;
+    height:80px;
+    border-radius:50%;
+    object-fit:cover;
+  }
 
-.text span{
-  font-weight :bold;
-}
+  .info .name{
+    font-weight:bold;
+    margin:5px 0 0 0;
+  }
 
-.userCard {
-  background:transparent;
-  padding:15px 0;
-  color:black;
-  border-style: solid;
-  border-color:rgb(2, 97, 67);
-  height:190px;
-  display:flex;
-  flex-direction:column;
-}
-
+  .info .email{
+    font-size:0.9rem;
+    color:#555;
+  }
 </style>

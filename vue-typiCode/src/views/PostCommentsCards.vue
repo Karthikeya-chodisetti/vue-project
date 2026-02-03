@@ -1,108 +1,115 @@
 <script setup>
-import { onMounted } from "vue";
+import { onMounted,ref } from "vue";
 import { useRoute } from "vue-router";
 
 import { useUsersStore } from "@/stores/users";
 import { usePostsStore } from "@/stores/posts";
 import { useCommentsStore } from "@/stores/comments";
 
-import UserCard from "@/components/UserCard.vue";
-import PostCard from "@/components/PostCard.vue";
-
 const usersStore = useUsersStore();
 const postsStore = usePostsStore();
 const commentsStore = useCommentsStore();
 
 const route = useRoute();
+const person=ref(null);
+
+const randomTime = () => {
+  const hr=Math.floor(Math.random()*12)+1;
+  const min=Math.floor(Math.random()*60);
+  return `${hr}:${min.toString()} ${Math.random()>0.5 ? "AM":"PM"}`;
+}
 
 onMounted(async () => {
-  if (!postsStore.currPost) {
-    await postsStore.fetchPosts();
-    postsStore.setPost(
-      postsStore.posts.find(p => p.id == route.params.id)
-    );
-  }
+  const postId=route.params.pId;
 
-  await commentsStore.fetchCommentsByPost(route.params.pId);
+  await postsStore.fetchPostById(postId);
+  await commentsStore.fetchCommentsByPost(postId);
 
-  if (!usersStore.currUser) {
-    await usersStore.fetchUsers();
-    usersStore.setUser(
-      usersStore.users.find(u => u.id == route.params.id)
-    );
-  }
+  const userId=postsStore.currPost.userId;
+  await usersStore.fetchUserById(userId);
+  
+  person.value=usersStore.currUser;
 });
 </script>
 
 <template>
-  <div class="top" v-if="postsStore.currPost && usersStore.currUser">
-    <div class="userRight shrink"><UserCard :user="usersStore.currUser" /></div>
-    <div class="postLeft shrink"><PostCard :post="postsStore.currPost" /></div>
-  </div>
+  <h2 class="title"> Comments </h2>
+  <div
+    v-for="comment in commentsStore.comments"
+    :key="comment.id"
+    class="comment-card"
+  >
+    <span class="time"> {{ randomTime() }} </span>
 
-  <h2 class="title">Comments</h2>
+    <div class="comments">
 
-  <div>
-    <div v-for="c in commentsStore.comments" :key="c.id">
-      <h4>CommentId: {{ c.id }}</h4>
-
-      <div class="text">
-      <p> <span>Email:</span> {{ c.email }}</p>
-      <p> <span>Name:</span> {{ c.name }}</p>
-      <p> <span>Body:</span> {{ c.body }}</p>
+      <div class="user" v-if="person">
+        <img class="avatar" :src="`https://i.pravatar.cc/300?img=${person.id}`" />
+        <span class="name">{{ person.name }}</span>
       </div>
 
-      <hr />
+      <div class="body">
+        <p>{{ comment.body }}</p>
+        <p class="email">{{ comment.email }}</p>
+      </div>
+
     </div>
   </div>
+
 </template>
 
 
 <style scoped>
-  .top{
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    align-items:start;
-    gap:20px;
-    margin-bottom: 25px;
-  }
 
-  .shrink{
-    align-self: flex-start;
-  }
+.comment-card {
+  position:relative;
+  border:1px solid #ddd;
+  padding:12px;
+  border-radius:10px;
+  margin-bottom:15px;
+  background:#fff;
+}
 
-  .shrink>* {
-    height: auto;
-  }
+.comments{
+  display:flex;
+  gap:14px;
+  margin-top:10px;
+}
 
-  .userRight{
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 15px;
-    font-family: Arial, Helvetica, sans-serif;
-    grid-column: 2;
-    justify-self: end;
-  }
+.user{
+  width:80px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+}
 
-  .postLeft{
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 15px;
-    font-family: Arial, Helvetica, sans-serif;
-    grid-column: 1;
-    justify-self: start;
-  }
+.avatar{
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  object-fit:cover;
+}
 
-  .text span{
-    font-weight:bold;
-  }
+.name{
+  margin-top:6px;
+  font-size:0.8rem;
+  font-weight:600;
+  color:#026143;
+}
 
-  .title{
-    text-align:center;
-    font-family:sans-serif;
-    color:cornflowerblue;
-    margin:30px 0px;
-    letter-spacing:2px;
-  }
+.body{
+  flex:1;
+  font-size:0.95rem;
+  line-height:1.4;
+}
+
+.time{
+  position:absolute;
+  top:8px;
+  right:12px;
+  font-size:0.8rem;
+  color:#777;
+}
 
 </style>

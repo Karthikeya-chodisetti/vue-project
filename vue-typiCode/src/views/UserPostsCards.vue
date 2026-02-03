@@ -13,12 +13,9 @@ const postsStore = usePostsStore();
 const route = useRoute();
 const router = useRouter();
 
-const currUser = computed(() => {
-  return userStore.currUser;
-});
 
 onMounted(async () => {
-  if (!userStore.currUser) {
+  if(!userStore.currUser) {
     await userStore.fetchUsers();
     userStore.setUser(
       userStore.users.find(u => u.id == route.params.id)
@@ -27,10 +24,15 @@ onMounted(async () => {
   await postsStore.fetchPostsByUser(route.params.id);
 });
 
+const currUser = computed(() => {
+  return userStore.currUser;
+});
+
 const openCmnts = (post) => {
   postsStore.setPost(post);
   router.push(`/cards/posts/${post.id}/comments`);
 };
+
 </script>
 
 
@@ -47,12 +49,9 @@ const openCmnts = (post) => {
       class="card"
       v-for="post in postsStore.posts"
       :key="post.id"
+      @click="openCmnts(post)"
     >
       <PostCard :post="post" />
-
-      <button class="cmnts-btn" @click="openCmnts(post)">
-        show comments
-      </button>
     </div>
   </div>
 </template>
@@ -76,30 +75,32 @@ const openCmnts = (post) => {
   .card {
     position:relative;
     background:white;
-    padding:20px;
+    padding:15px;
     border-radius:15px;
     overflow:hidden;
     transform:scale(1);
     transition:
-      transform 0.5s,
-      back-ground 0.5s,
-      box-shadow 0.5s;
-    box-sizing:border-box;
+      transform 0.3s ease,
+      background-color 0.5s ease,
+      box-shadow 0.5s ease;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:260px;
     }
 
   .tr{
     display: flex;
     justify-content: flex-end;
     margin-bottom: 15px;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Arial;
   }
 
   .card:hover{
-    transform:scale(1.04);
-    background:#e3f4ab;
-    box-shadow:5px 5px 20px #2a2a2a;
+    transform:translateY(-4px);
+    background:#cdd3d1;
+    box-shadow:0 8px 20px rgba(0,0,0,0.15);
   }
-
 
   .cmnts-btn {
     opacity:0;
