@@ -16,7 +16,7 @@ const person=ref(null);
 const randomTime = () => {
   const hr=Math.floor(Math.random()*12)+1;
   const min=Math.floor(Math.random()*60);
-  return `${hr}:${min.toString()} ${Math.random()>0.5 ? "AM":"PM"}`;
+  return `${hr}:${min} ${Math.random()>0.5 ? "AM":"PM"}`;
 }
 
 onMounted(async () => {
@@ -27,7 +27,7 @@ onMounted(async () => {
 
   const userId=postsStore.currPost.userId;
   await usersStore.fetchUserById(userId);
-  
+
   person.value=usersStore.currUser;
 });
 </script>

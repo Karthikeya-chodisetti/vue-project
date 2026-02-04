@@ -6,6 +6,7 @@ import { useUsersStore } from "@/stores/users";
 import UserCard from "@/components/UserCard.vue";
 import PostCard from "@/components/PostCard.vue";
 
+import Swal from "sweetalert2";
 
 
 const postsStore = usePostsStore();
@@ -13,6 +14,7 @@ const usersStore = useUsersStore();
 const router = useRouter();
 
 const openPostId= ref(null);
+const newPost=ref({ title:"", body:"" });
 
 onMounted(async () => {
   await postsStore.fetchPosts();
@@ -31,9 +33,36 @@ const toggleUserCard =(postId) => {
   openPostId.value = openPostId.value === postId ? null : postId;
 };
 
-// const createPost = () => {
-//   console.log("Create Post clicked");
-// };
+const createPost = async () => {
+
+  const {value: formValues} = await Swal.fire({
+    title:'Create New Post',
+    html:
+      '<input id="swal-input1" class="swal2-input" placeholder="Title">'+
+      '<textarea id="swal-input2" class="swal2-textarea" placeholder="Body"></textarea>',
+
+    showCloseButton:true,
+
+    preConfirm: () => {
+
+      const title=document.getElementById('swal-input1').value;
+      const body=document.getElementById('swal-input2').value;
+
+      return { title,body };
+    },
+  });
+
+  if(formValues){
+    Swal.fire({
+      icon:"success",
+      title:"Post Created",
+      html:`<strong>Title:</strong> ${formValues.title} <br> <strong>Body:</strong> ${formValues.body}`,
+      timer:2500,
+    });
+    newPost.value ={ title: "", body: "" };
+  }
+};
+
 
 </script>
 
@@ -41,7 +70,7 @@ const toggleUserCard =(postId) => {
   <div class="heading">
     <h1>All Posts</h1>
 
-    <button class="create-btn" @click="CreatePost">Create Post</button>
+    <button class="create-btn" @click="createPost">Create Post</button>
   </div>
   <div class="grid">
     <div
@@ -109,7 +138,7 @@ const toggleUserCard =(postId) => {
 }
 
 .link{
-  color:lightblue;
+  color:rgb(97, 179, 206);
   font-weight:bold;
   cursor:pointer;
 }
@@ -119,4 +148,5 @@ const toggleUserCard =(postId) => {
   display:flex;
   justify-content:center;
 }
+
 </style>
